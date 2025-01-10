@@ -1,12 +1,22 @@
 import express from 'express';
-
+import {UserModel} from './db';
 const user = express.Router();
 
 user.post('/signup',(req,res)=>{
+    const username = req.body.username;
+    const password = req.body.password;
 
+    UserModel.create({
+        username:username,
+        password:password
+    })
+
+    res.json({
+        message:"User created"
+    })
 });
 
-user.post('/signin',(req:string,res:string)=>{
+user.post('/signin',(req,res)=>{
    
 });
 
