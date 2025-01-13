@@ -16,30 +16,86 @@ const express_1 = __importDefault(require("express"));
 const db_1 = require("./db");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const zod_1 = require("zod");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = require("./config");
+const middleware_1 = require("./middleware");
 const user = express_1.default.Router();
 const userSchema = zod_1.z.object({
-    username: zod_1.z.string().min(1, "username is requires"),
-    password: zod_1.z.string().min(6, "password is required and must be 6 characters long")
+    username: zod_1.z.string().min(1, "Username is required"),
+    password: zod_1.z.string().min(6, "Password must be at least 6 characters long"),
 });
 user.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { username, password } = req.body;
-        //checking if user already exist
+        const { username, password } = userSchema.parse(req.body);
         const existuser = yield db_1.UserModel.findOne({ username });
         if (existuser) {
-            return res.status(400).json({
-                message: 'useralready exits'
+            res.status(400).json({
+                message: 'User already exists',
             });
         }
-        //hash the password
         const hashpassword = yield bcrypt_1.default.hash(password, 10);
-        //creatig new user
-        db_1.UserModel.create({
+        yield db_1.UserModel.create({
             username,
-            password: hashpassword
+            password: hashpassword,
         });
         res.status(201).json({
-            message: 'user created'
+            message: 'User created successfully',
+        });
+    }
+    catch (e) {
+        console.error('Error during signup:', e);
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
+user.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username, password } = userSchema.parse(req.body);
+        const user = yield db_1.UserModel.findOne({
+            username,
+        });
+        if (!user) {
+            res.status(400).json({
+                message: 'user not found'
+            });
+        }
+        else {
+            const isValid = yield bcrypt_1.default.compare(password, user.password);
+            if (isValid) {
+                const token = jsonwebtoken_1.default.sign({
+                    id: user._id
+                }, config_1.JWT_USER_PASSWORD);
+                res.status(200).json({
+                    token
+                });
+            }
+            else {
+                res.status(400).json({
+                    message: 'invalid password'
+                });
+            }
+        }
+    }
+    catch (e) {
+        res.status(500).json({
+            message: 'something went wrong'
+        });
+    }
+}));
+user.post('/content', middleware_1.usermiddlewares, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const link = req.body.link;
+        const type = req.body.type;
+        yield db_1.ContentModel.create({
+            link,
+            type,
+            title: req.body.title,
+            userId: req.userId,
+            tags: []
+        });
+        res.json({
+            message: "Content added"
         });
     }
     catch (e) {
@@ -48,22 +104,20 @@ user.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
     }
 }));
-user.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+user.get('/content', middleware_1.usermiddlewares, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const userId = req.userId;
+        const content = yield db_1.ContentModel.find({
+            userId: userId
+        }).populate('userId', 'username');
+        res.json({
+            content
+        });
     }
     catch (e) {
-    }
-}));
-user.post('/content', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-    }
-    catch (e) {
-    }
-}));
-user.get('/content', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-    }
-    catch (e) {
+        res.status(500).json({
+            message: "something went wrong"
+        });
     }
 }));
 user.delete('/content', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
