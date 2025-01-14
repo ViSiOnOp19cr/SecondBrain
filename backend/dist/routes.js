@@ -17,6 +17,7 @@ const db_1 = require("./db");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const zod_1 = require("zod");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const utils_1 = require("./utils");
 const config_1 = require("./config");
 const middleware_1 = require("./middleware");
 const user = express_1.default.Router();
@@ -120,22 +121,83 @@ user.get('/content', middleware_1.usermiddlewares, (req, res) => __awaiter(void 
         });
     }
 }));
-user.delete('/content', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+user.delete('/content', middleware_1.usermiddlewares, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const contentid = req.body.contentid;
+        yield db_1.ContentModel.deleteOne({
+            _id: contentid,
+            userId: req.userId
+        });
+        res.status(200).json({
+            message: "content delted"
+        });
     }
     catch (e) {
+        res.status(500).json({
+            message: "something went wrong"
+        });
     }
 }));
-user.post('/brain/share', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+user.post('/brain/share', middleware_1.usermiddlewares, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const share = req.body;
+        if (share) {
+            const existingLink = yield db_1.LinkModel.findOne({
+                userId: req.userId
+            });
+            if (existingLink) {
+                res.json({ hash: existingLink.hash });
+                return;
+            }
+            const hash = (0, utils_1.random)(10);
+            yield db_1.LinkModel.create({
+                userId: req.userId,
+                hash
+            });
+            res.json({ hash });
+        }
+        else {
+            yield db_1.LinkModel.deleteOne({
+                userId: req.userId
+            });
+            res.json({
+                message: "removed link"
+            });
+        }
     }
     catch (e) {
+        res.status(500).json({
+            message: "something went wrong"
+        });
     }
 }));
-user.get('/brain/share', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+user.get('/brain/:sharelink', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const hash = req.params.sharelink;
+        const link = yield db_1.LinkModel.findOne({ hash });
+        if (!link) {
+            res.status(404).json({
+                message: "Invalid shate link"
+            });
+            return;
+        }
+        const content = yield db_1.ContentModel.find({
+            userId: link.userId
+        });
+        const user = yield db_1.UserModel.findOne({ _id: link.userId });
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+        res.json({
+            username: user.username,
+            content
+        });
     }
     catch (e) {
+        res.status(500).json({
+            message: "something went wrong"
+        });
     }
 }));
 exports.default = user;
