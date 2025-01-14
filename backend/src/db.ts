@@ -20,7 +20,7 @@ const LinkSchema = new Schema({
     }
 });
 
-export const LinkModel = model('Linl',LinkSchema);
+export const LinkModel = model('Link',LinkSchema);
 
 export const ContentModel = model('content', ContentSchema);
 

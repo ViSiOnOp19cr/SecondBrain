@@ -18,8 +18,8 @@ user.post('/signup', async (req, res) => {
     try {
 
         const { username, password } = userSchema.parse(req.body);
-
         const existuser = await UserModel.findOne({ username });
+        
         if (existuser) {
             res.status(400).json({
                 message: 'User already exists',
