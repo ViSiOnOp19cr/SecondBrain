@@ -19,6 +19,7 @@ const sizeStyles = {
 const defaultstyles = "rounded-md p-4 flex"
 export const Button = (props:ButtonProps) =>{
     return <button
+    onClick={props.onClick}
     className={`${varientStyles[props.varient]} ${defaultstyles} 
     ${sizeStyles[props.size]}`} 
     >{props.startIcon ? <div className="pr-2">{props.startIcon}</div>:null} {props.text} {props.endIcon}</button>
