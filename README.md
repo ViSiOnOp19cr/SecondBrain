@@ -1,2 +1,2 @@
 # SecondBrain
-## SecondBrain 📚🧠
+### SecondBrain 📚🧠
