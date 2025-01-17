@@ -36,5 +36,5 @@
 3. Start the application:  
    ```bash
    npm run dev
-   int both frontend and backend terminal.
+   in both frontend and backend terminal.
    ```
