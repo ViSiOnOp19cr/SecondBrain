@@ -14,73 +14,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const db_1 = require("./db");
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const zod_1 = require("zod");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const utils_1 = require("./utils");
 const config_1 = require("./config");
 const middleware_1 = require("./middleware");
 const user = express_1.default.Router();
-const userSchema = zod_1.z.object({
-    username: zod_1.z.string().min(1, "Username is required"),
-    password: zod_1.z.string().min(6, "Password must be at least 6 characters long"),
-});
-user.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+user.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // TODO: zod validation , hash the password
+    const username = req.body.username;
+    const password = req.body.password;
     try {
-        const { username, password } = userSchema.parse(req.body);
-        const existuser = yield db_1.UserModel.findOne({ username });
-        if (existuser) {
-            res.status(400).json({
-                message: 'User already exists',
-            });
-        }
-        const hashpassword = yield bcrypt_1.default.hash(password, 10);
         yield db_1.UserModel.create({
-            username,
-            password: hashpassword,
+            username: username,
+            password: password
         });
-        res.status(201).json({
-            message: 'User created successfully',
+        res.json({
+            message: "User signed up"
         });
     }
     catch (e) {
-        console.error('Error during signup:', e);
-        res.status(500).json({
-            message: 'Something went wrong'
+        res.status(411).json({
+            message: "User already exists"
         });
     }
 }));
-user.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+user.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const username = req.body.username;
+    const password = req.body.password;
     try {
-        const { username, password } = userSchema.parse(req.body);
-        const user = yield db_1.UserModel.findOne({
+        const existingUser = yield db_1.UserModel.findOne({
             username,
+            password
         });
-        if (!user) {
-            res.status(400).json({
-                message: 'user not found'
+        if (existingUser) {
+            const token = jsonwebtoken_1.default.sign({
+                id: existingUser._id
+            }, config_1.JWT_USER_PASSWORD);
+            res.json({
+                token
             });
         }
         else {
-            const isValid = yield bcrypt_1.default.compare(password, user.password);
-            if (isValid) {
-                const token = jsonwebtoken_1.default.sign({
-                    id: user._id
-                }, config_1.JWT_USER_PASSWORD);
-                res.status(200).json({
-                    token
-                });
-            }
-            else {
-                res.status(400).json({
-                    message: 'invalid password'
-                });
-            }
+            res.status(403).json({
+                message: "Incorrrect credentials"
+            });
         }
     }
     catch (e) {
         res.status(500).json({
-            message: 'something went wrong'
+            message: "something went wrong"
         });
     }
 }));

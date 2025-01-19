@@ -1,7 +1,8 @@
-import { ShareIcon } from "../assets/ShareIcon";
-import { Delete } from "../assets/Delete";
-import { Video } from "../assets/video";
-import { Twitter } from "../assets/twitter";
+import { ShareIcon } from "../../assets/ShareIcon";
+import { Delete } from "../../assets/Delete";
+import { Video } from "../../assets/video";
+import { Twitter } from "../../assets/twitter";
+
 interface CardProps {
   title: string;
   link: string;
@@ -41,7 +42,7 @@ export const Card = (props: CardProps) => {
               src={props.link.replace("watch?v=", "embed/").split("&")[0]} // Remove additional parameters
               title="YouTube video player"
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
           )}
