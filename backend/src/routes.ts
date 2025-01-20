@@ -101,11 +101,11 @@ user.get('/content', usermiddlewares, async (req, res) => {
     }
 });
 
-user.delete('/content', usermiddlewares, async (req, res) => {
+user.delete('/content/:id', usermiddlewares, async (req, res) => {
     try {
-        const contentid = req.body.contentid;
+        const { id } = req.params;
         await ContentModel.deleteOne({
-            _id: contentid,
+            _id: id,
             userId: req.userId
         });
         res.status(200).json({

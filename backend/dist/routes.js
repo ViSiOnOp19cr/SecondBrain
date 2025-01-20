@@ -103,11 +103,11 @@ user.get('/content', middleware_1.usermiddlewares, (req, res) => __awaiter(void 
         });
     }
 }));
-user.delete('/content', middleware_1.usermiddlewares, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+user.delete('/content/:id', middleware_1.usermiddlewares, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const contentid = req.body.contentid;
+        const { id } = req.params;
         yield db_1.ContentModel.deleteOne({
-            _id: contentid,
+            _id: id,
             userId: req.userId
         });
         res.status(200).json({

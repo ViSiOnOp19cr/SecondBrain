@@ -2,12 +2,39 @@ import { ShareIcon } from "../../assets/ShareIcon";
 import { Delete } from "../../assets/Delete";
 import { Video } from "../../assets/video";
 import { Twitter } from "../../assets/twitter";
+import axios from 'axios';
+import { BACKEND_URL } from "../../config";
+
+
+
 
 interface CardProps {
   title: string;
   link: string;
   type: "twitter" | "youtube";
+  id: string;
+  onDelete:(id:string)=>void;
 }
+const del = async (id:string,onDelete:(id:string) =>void) => {
+  console.log(id);
+  try{
+    const token = localStorage.getItem('token');
+    if(!token){
+      throw new Error("Token not found");
+    }
+    await axios.delete(`${BACKEND_URL}/api/v1/content/${id}`, {
+      headers:{
+        Authorization:token
+      }
+    });
+    alert("Content delted");
+    onDelete(id);
+
+
+  }catch(e){
+    alert("something went wrong");
+  }
+};
 
 export const Card = (props: CardProps) => {
   return (
@@ -27,10 +54,10 @@ export const Card = (props: CardProps) => {
             <div className="pr-2 text-gray-500">
               <a href={props.link}>
                 <ShareIcon size="lg" />
-              </a>
+              </a> 
             </div>
-            <div className="text-gray-500">
-              <Delete />
+            <div onClick={() => del(props.id, props.onDelete)} className="text-gray-500 cursor-pointer hover:color:gray">
+              <Delete/>
             </div>
           </div>
         </div>
