@@ -7,8 +7,7 @@ import { BACKEND_URL } from "../../config";
 
 
 
-
-interface CardProps {
+export interface CardProps {
   title: string;
   link: string;
   type: "twitter" | "youtube";

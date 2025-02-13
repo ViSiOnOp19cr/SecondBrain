@@ -6,6 +6,8 @@ import { CreateContent } from "../components/createContent";
 import { useEffect, useState } from "react";
 import { Sidebar } from "../components/slidebar";
 import { useContent } from "./hooks/usecontent";
+import { BACKEND_URL } from "../config";
+import axios from "axios";
 interface Card{
   id:string;
   title:string;
@@ -52,6 +54,18 @@ export function Dashboard() {
           text="Add Content"
         />
         <Button
+          onClick={async ()=>{
+            const response = await axios.post(`${BACKEND_URL}/api/v1/brain/share`,{
+              Share:true
+            },{
+              headers:{
+                Authorization:localStorage.getItem('token')
+              }
+            });
+            const url = `http://localhost:5173/share/${response.data.hash}`;
+            navigator.clipboard.writeText(url);
+            alert("Brain copied to clipboard");
+          }}
           startIcon={<ShareIcon size="lg" />}
           size="md"
           varient="primary"

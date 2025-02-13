@@ -17,6 +17,8 @@ export function useContent() {
             Authorization: token
           }
         });
+        console.log('thi is response.data' + response.data);
+            console.log('this is respons.data.condten' + response.data.content);
   
         setContent(response.data.content);
       } catch (err) {

@@ -5,8 +5,8 @@ import { useRef } from "react";
 import { BACKEND_URL } from "../../config";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-export function Signup(){
 
+export function Signup(){
     const usernameref = useRef<HTMLInputElement>();
     const passwordref = useRef<HTMLInputElement>();
     const navigate = useNavigate();
@@ -15,14 +15,13 @@ export function Signup(){
         const password = passwordref.current?.value;
         await axios.post(BACKEND_URL+ "/api/v1/signup",{
             
-                username,
+                username:username,
                 password
             
         })
         navigate("/signin")
         alert("Signup Successfull")
     }
-   
 
     return (
         <div className="h-screen w-screen bg-gray-200">
