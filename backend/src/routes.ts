@@ -9,19 +9,15 @@ import { usermiddlewares } from './middleware';
 
 const user = express.Router();
 
-
-
 user.post("/signup", async (req, res) => {
     // TODO: zod validation , hash the password
     const username = req.body.username;
     const password = req.body.password;
-
     try {
         await UserModel.create({
             username: username,
             password: password
         })
-
         res.json({
             message: "User signed up"
         })
@@ -31,11 +27,11 @@ user.post("/signup", async (req, res) => {
         })
     }
 })
-
 user.post("/signin", async (req, res) => {
 
     const username = req.body.username;
     const password = req.body.password;
+    console.log(username, password);
     try {
         const existingUser = await UserModel.findOne({
             username,
@@ -153,9 +149,10 @@ user.post('/brain/share', usermiddlewares, async (req, res) => {
     }
 });
 
-user.get('/brain/:sharelink', async (req, res) => {
+user.get('/brain/share/:hash', async (req, res) => {
     try {
-        const hash = req.params.sharelink;
+
+        const hash = req.params.hash;
 
         const link = await LinkModel.findOne({ hash });
         if (!link) {

@@ -41,6 +41,7 @@ user.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* (
 user.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const username = req.body.username;
     const password = req.body.password;
+    console.log(username, password);
     try {
         const existingUser = yield db_1.UserModel.findOne({
             username,
@@ -153,9 +154,9 @@ user.post('/brain/share', middleware_1.usermiddlewares, (req, res) => __awaiter(
         });
     }
 }));
-user.get('/brain/:sharelink', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+user.get('/brain/share/:hash', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const hash = req.params.sharelink;
+        const hash = req.params.hash;
         const link = yield db_1.LinkModel.findOne({ hash });
         if (!link) {
             res.status(404).json({

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "../components/slidebar";
 import { useContent } from "./hooks/usecontent";
 import { BACKEND_URL } from "../config";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 interface Card{
   id:string;
@@ -18,6 +19,8 @@ export function Dashboard() {
   const [modelOpen, setModelOpen] = useState(false);
   const {content,fetchContent} = useContent();
   const [cards , setcards] = useState<Card[]>(content);
+  const Navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   useEffect(()=>{
     setcards(content);
@@ -34,6 +37,13 @@ export function Dashboard() {
   const handleAddContent = () => {
     setModelOpen(true);
   };
+  const handleconditionrender = ()=>{
+    Navigate('/signup')
+  }
+  const handleLogout = () => {
+    localStorage.removeItem('token'); 
+    Navigate('/signin'); 
+  };
 
   return (
     <div>
@@ -45,7 +55,24 @@ export function Dashboard() {
         open={modelOpen}
         onClose={handleCloseModal}
       />
-      <div className="flex justify-end gap-4">
+       <div className="flex justify-end gap-4">
+        {!token &&
+         <Button 
+          onClick={handleconditionrender}
+          size="md"
+          varient="secondary"
+          text="Sign UP"
+        />
+        }
+        {
+          token && 
+          <Button 
+          onClick={handleLogout}
+          size='md'
+          varient='secondary'
+          text = "LogOut"
+          />
+}
         <Button
           onClick={handleAddContent}
           startIcon={<Plusicon />}
