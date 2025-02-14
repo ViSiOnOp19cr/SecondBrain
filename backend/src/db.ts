@@ -11,7 +11,7 @@ const ContentSchema = new Schema({
     type:String,
     tags: [{type: mongoose.Types.ObjectId, ref: 'Tag'}],
     userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true },
-}, { timestamps: true });
+});
 
 const LinkSchema = new Schema({
     hash:String,

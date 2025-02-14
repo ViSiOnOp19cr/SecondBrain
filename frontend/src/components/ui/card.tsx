@@ -4,14 +4,15 @@ import { Video } from "../../assets/video";
 import { Twitter } from "../../assets/twitter";
 import axios from 'axios';
 import { BACKEND_URL } from "../../config";
-
-
+import moment from "moment";
+import { useState, useEffect } from "react";
 
 export interface CardProps {
   title: string;
   link: string;
   type: "twitter" | "youtube";
   id: string;
+  createdAt: string;
   onDelete:(id:string)=>void;
 }
 const del = async (id:string,onDelete:(id:string) =>void) => {
@@ -36,6 +37,13 @@ const del = async (id:string,onDelete:(id:string) =>void) => {
 };
 
 export const Card = (props: CardProps) => {
+  const [timeAgo, setTimeAgo] = useState(moment(props.createdAt).fromNow());
+  useEffect(() => {
+    const interval = setInterval(() => {
+        setTimeAgo(moment(props.createdAt).fromNow());
+    }, 60000); // Update every 60 seconds
+    return () => clearInterval(interval);
+}, [props.createdAt]);
   return (
     <div>
       <div
@@ -78,6 +86,7 @@ export const Card = (props: CardProps) => {
             </blockquote>
           )}
         </div>
+        <div>{timeAgo}</div>
       </div>
     </div>
   );

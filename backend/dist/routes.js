@@ -76,7 +76,8 @@ user.post('/content', middleware_1.usermiddlewares, (req, res) => __awaiter(void
             type,
             title: req.body.title,
             userId: req.userId,
-            tags: []
+            tags: [],
+            createdAt: new Date()
         });
         res.json({
             message: "Content added"
