@@ -7,6 +7,7 @@ interface Card{
     title:string;
     link:string;
     type:string;
+    createdAt:string;
 }
 export const YoutubeItems = () =>{
     const {content,fetchContent} = useContent();
@@ -26,13 +27,14 @@ export const YoutubeItems = () =>{
             <div className="flex gap-4 flex-wrap">
               {cards
                 .filter((card) => card.type === 'youtube')
-                .map(({ title, link, id }) => (
+                .map(({ title, link, id, createdAt }) => (
                   <Card
                     key={id}
                     id={id}
                     title={title}
                     link={link}
                     type="youtube"
+                    createdAt={createdAt}
                     onDelete={handleDelete}
                   />
                 ))}

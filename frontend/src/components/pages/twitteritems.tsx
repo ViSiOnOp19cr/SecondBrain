@@ -7,6 +7,7 @@ interface Card{
     title:string;
     link:string;
     type:string;
+    createdAt: string;
 }
 export const TwitterItems = () =>{
     const {content,fetchContent} = useContent();
@@ -26,13 +27,14 @@ export const TwitterItems = () =>{
             <div className="flex gap-4 flex-wrap">
               {cards
                 .filter((card) => card.type === 'twitter')
-                .map(({ title, link, id }) => (
+                .map(({ title, link, id,createdAt }) => (
                   <Card
                     key={id}
                     id={id}
                     title={title}
                     link={link}
                     type="twitter"
+                    createdAt={createdAt}
                     onDelete={handleDelete}
                   />
                 ))}
