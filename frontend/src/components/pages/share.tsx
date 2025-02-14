@@ -8,6 +8,7 @@ interface Content {
   title: string;
   link: string;
   type: string;
+  createdAt: string;
 }
 
 export const SharePage = () => {
@@ -38,9 +39,10 @@ export const SharePage = () => {
     <div className="p-4 min-h-screen bg-gray-100">
       <h1 className="text-2xl font-bold mb-4">Shared Content</h1>
       <div className="flex gap-4 sm:col-span-1 col-span-4 flex-wrap">
-        {content.map(({ id, title, link, type }) => (
+        {content.map(({ id, title, link, type, createdAt }) => (
           <div key={id} className="p-4 bg-white rounded-md border-gray-200 max-w-72">
             <h3>{title}</h3>
+            <p className="text-sm text-gray-500">Added {new Date(createdAt).toLocaleString()}</p>
             <div>
           {type === "youtube" && (
             <iframe
@@ -64,4 +66,3 @@ export const SharePage = () => {
     </div>
   );
 };
-
