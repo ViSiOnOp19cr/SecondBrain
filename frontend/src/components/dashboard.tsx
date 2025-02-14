@@ -14,6 +14,7 @@ interface Card{
   title:string;
   link:string;
   type:string;
+  createdAt: string;
 }
 export function Dashboard() {
   const [modelOpen, setModelOpen] = useState(false);
@@ -101,13 +102,14 @@ export function Dashboard() {
       </div>
       <div className="flex gap-4 sm? col-span-1 : col-span-4 flex-wrap">
         
-        {content.map(({title,link,type,_id}) => 
+        {content.map(({title,link,type,_id, createdAt}) => 
             <Card
               key={_id}
               id={_id}
               title={title}
               link={link}
               type={type}
+              createdAt={createdAt}
               onDelete={handleDelete}
             />)}
        
@@ -116,5 +118,3 @@ export function Dashboard() {
     </div>
   );
 }
-
-

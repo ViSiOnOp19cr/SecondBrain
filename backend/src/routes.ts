@@ -67,7 +67,8 @@ user.post('/content', usermiddlewares, async (req: Request, res: Response) => {
             type,
             title: req.body.title,
             userId: req.userId,
-            tags: []
+            tags: [],
+            createdAt: new Date()
         })
         res.json({
             message: "Content added"
